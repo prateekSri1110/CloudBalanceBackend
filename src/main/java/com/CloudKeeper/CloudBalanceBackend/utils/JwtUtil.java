@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,13 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getAuthorities().iterator().next().getAuthority());
 
-        return Jwts.builder().setClaims(claims).setSubject(user.getUsername()).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + EXPIRY)).signWith(secretKey, SignatureAlgorithm.HS256).compact();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRY))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     //    extract emailId from jwd token
