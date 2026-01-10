@@ -5,10 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LoginResponseDTO {
-    String token;
-    String emailId;
-    String name;
-    String role;
+public class AccountDTO {
+    private Long accountId;
+    private String accName;
+    private String arn;
 }
-

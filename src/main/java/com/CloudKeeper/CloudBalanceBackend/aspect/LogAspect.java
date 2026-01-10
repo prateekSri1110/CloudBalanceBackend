@@ -14,10 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAspect {
 
-    @Pointcut("execution(* com.CloudKeeper.CloudBalanceBackend.controller.UserLoginController.*.*(..))")
-    public void loginAuthMethod() {
-    }
-
     @Pointcut("execution(* com.CloudKeeper.CloudBalanceBackend.service.*.*(..))")
     public void serviceMethods() {
     }

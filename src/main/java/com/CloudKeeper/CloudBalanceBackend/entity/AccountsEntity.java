@@ -19,15 +19,16 @@ public class AccountsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String accountName;
+
+    @Column(nullable = false)
     private Long accountId;
 
     @Column(nullable = false)
-    private String accName;
-
-    @Column(nullable = false)
     private String arn;
-
-    private boolean assigned;
 
     @ManyToMany(mappedBy = "accounts", cascade = CascadeType.MERGE)
     private Set<UserEntity> users = new HashSet<>();
