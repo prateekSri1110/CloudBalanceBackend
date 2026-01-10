@@ -1,9 +1,13 @@
 package com.CloudKeeper.CloudBalanceBackend.service;
 
+import com.CloudKeeper.CloudBalanceBackend.entity.AccountsEntity;
 import com.CloudKeeper.CloudBalanceBackend.entity.UserEntity;
+import com.CloudKeeper.CloudBalanceBackend.modal.UserAccountDTO;
 import com.CloudKeeper.CloudBalanceBackend.modal.UserRequestDTO;
 import com.CloudKeeper.CloudBalanceBackend.modal.UserResponseDTO;
+import com.CloudKeeper.CloudBalanceBackend.repository.AccountsRepository;
 import com.CloudKeeper.CloudBalanceBackend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,18 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     //  constructor injection
     private final UserRepository userRepo;
+    private final AccountsRepository accountsRepo;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     //    get all users
     public List<UserResponseDTO> getAllUsers() {
@@ -42,10 +45,12 @@ public class UserService {
     }
 
     //    add new user
-    public ResponseEntity<String> createUser(UserRequestDTO user) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ResponseEntity<UserEntity> createUser(UserRequestDTO user) {
 
         if (userRepo.findByEmailId(user.getEmailId()) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+//            "User already exists"
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
 
         UserEntity entity = new UserEntity();
@@ -58,9 +63,11 @@ public class UserService {
         entity.setLastLogin(user.getLastLogin());
 
         userRepo.save(entity);
+        UserEntity res = userRepo.findByEmailId(user.getEmailId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
+
 
     //    update user details
     public ResponseEntity<String> updateUser(UserRequestDTO updatedUser) {
@@ -102,4 +109,39 @@ public class UserService {
         userRepo.delete(user);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("User with email Id : " + emailId + " is deleted successfully!");
     }
+
+    public Set<UserAccountDTO> associatedAccounts(String emailId) {
+        UserEntity user = userRepo.findByEmailId(emailId);
+        return user.getAccounts()
+                .stream()
+                .map(acc -> new UserAccountDTO(
+                        acc.getAccountId(),
+                        acc.getAccountName(),
+                        acc.getArn()
+                ))
+                .collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public void assignAccountToUser(UserRequestDTO userDto, List<Long> accountIds) {
+        UserEntity user = userRepo.findByEmailId(userDto.getEmailId());
+
+        if (user == null)
+            user = createUser(userDto).getBody();
+
+        List<AccountsEntity> accounts = accountsRepo.findAllById(accountIds);
+
+        if (accounts.isEmpty())
+            throw new RuntimeException("No valid accounts found");
+
+        for (AccountsEntity account : accounts) {
+            if (!user.getAccounts().contains(account)) {
+                user.getAccounts().add(account);
+                account.getUsers().add(user);
+            }
+        }
+
+        userRepo.save(user);
+    }
+
 }

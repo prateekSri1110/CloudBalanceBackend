@@ -42,7 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authHeader.substring(7);
+        String token = authHeader.substring(7);      // extracting JWT token
         try {
             String email = jwtUtil.emailIdExtraction(token);
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {

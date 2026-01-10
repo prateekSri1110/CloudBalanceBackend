@@ -30,20 +30,25 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "firstName")
     private String firstName;
+
     @Column(name = "lastName")
     private String lastName;
+
     @Column(name = "emailId", nullable = false, unique = true)
     private String emailId;
+
     private String role;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastLogin;
+
     private Boolean active;
+
     @Column(nullable = false)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "onboardedAccounts", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "accounts_id"))
+    @JoinTable(name = "user_Accounts", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<AccountsEntity> accounts = new HashSet<>();
 
     @Override
