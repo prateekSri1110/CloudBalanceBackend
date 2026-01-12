@@ -20,7 +20,7 @@ public class UserLoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody UserRequestDTO cred) {
+    public ResponseEntity<String> loginUser(@RequestBody UserRequestDTO cred) {
         return userLoginService.loginUserService(cred.getEmailId(), cred.getPassword());
     }
 }

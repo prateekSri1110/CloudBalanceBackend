@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class SnowflakePropsDTO {
 
     private String url;
-//    private String user;
     private String account;
     private String password;
     private String role;
