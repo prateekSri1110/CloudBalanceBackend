@@ -2,8 +2,10 @@ package com.CloudKeeper.CloudBalanceBackend.snowflake;
 
 import com.snowflake.snowpark.Session;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Profile("prod")
 @Component
 public class ConnectingSnowflake implements CommandLineRunner {
 

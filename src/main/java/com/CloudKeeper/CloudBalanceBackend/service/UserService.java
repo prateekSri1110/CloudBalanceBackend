@@ -2,6 +2,7 @@ package com.CloudKeeper.CloudBalanceBackend.service;
 
 import com.CloudKeeper.CloudBalanceBackend.entity.AccountsEntity;
 import com.CloudKeeper.CloudBalanceBackend.entity.UserEntity;
+import com.CloudKeeper.CloudBalanceBackend.modal.ProfileDTO;
 import com.CloudKeeper.CloudBalanceBackend.modal.UserAccountDTO;
 import com.CloudKeeper.CloudBalanceBackend.modal.UserRequestDTO;
 import com.CloudKeeper.CloudBalanceBackend.modal.UserResponseDTO;
@@ -10,6 +11,7 @@ import com.CloudKeeper.CloudBalanceBackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,7 +47,7 @@ public class UserService {
     }
 
     //    add new user
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRED)
     public ResponseEntity<UserEntity> createUser(UserRequestDTO user) {
 
         if (userRepo.findByEmailId(user.getEmailId()) != null) {
@@ -144,4 +146,9 @@ public class UserService {
         userRepo.save(user);
     }
 
+    public ResponseEntity<ProfileDTO> profile(String emailId) {
+        UserEntity user = userRepo.findByEmailId(emailId);
+        if (user == null) throw new UsernameNotFoundException("User doesn't exist!");
+        return ResponseEntity.ok(new ProfileDTO(user.getFirstName() + " " + user.getLastName(), user.getRole()));
+    }
 }
