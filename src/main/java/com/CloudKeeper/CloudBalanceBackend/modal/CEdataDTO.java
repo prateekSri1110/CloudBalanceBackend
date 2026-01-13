@@ -8,6 +8,9 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public class CEdataDTO {
+
     private String type;
-//    Map<String,Object>
+    private String subtype;
+    private Map<String, Long> monthCost;
+    private Long totalCost;
 }

@@ -1,9 +1,9 @@
 package com.CloudKeeper.CloudBalanceBackend.controller;
 
-import com.CloudKeeper.CloudBalanceBackend.entity.AccountsEntity;
 import com.CloudKeeper.CloudBalanceBackend.modal.AccountDTO;
-import com.CloudKeeper.CloudBalanceBackend.repository.UserRepository;
+import com.CloudKeeper.CloudBalanceBackend.modal.CeRequestDTO;
 import com.CloudKeeper.CloudBalanceBackend.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +20,7 @@ public class AccountController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> createAccount(@RequestBody AccountsEntity accountDet) {
+    public ResponseEntity<String> createAccount(@Valid @RequestBody CeRequestDTO accountDet) {
         return accountService.createAccount(accountDet);
     }
 

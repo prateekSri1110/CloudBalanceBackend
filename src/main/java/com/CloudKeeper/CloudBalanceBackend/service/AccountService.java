@@ -2,6 +2,7 @@ package com.CloudKeeper.CloudBalanceBackend.service;
 
 import com.CloudKeeper.CloudBalanceBackend.entity.AccountsEntity;
 import com.CloudKeeper.CloudBalanceBackend.modal.AccountDTO;
+import com.CloudKeeper.CloudBalanceBackend.modal.CeRequestDTO;
 import com.CloudKeeper.CloudBalanceBackend.repository.AccountsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,17 +28,22 @@ public class AccountService {
     }
 
     //    orphan account creation
-    public ResponseEntity<String> createAccount(AccountsEntity accountDet) {
+    public ResponseEntity<String> createAccount(CeRequestDTO accountDet) {
         AccountsEntity existingAcc = accountsRepo.findByAccountId(accountDet.getAccountId());
 
         if (existingAcc != null) {
-            return ResponseEntity.badRequest().body("Account with AccountId : " + accountDet.getAccountId() + " already exists!");
-        }
-        if (accountDet.getAccountName() == null) {
-            throw new IllegalArgumentException("Account name is required");
+            return ResponseEntity.badRequest()
+                    .body("Account with AccountId : "
+                            + accountDet.getAccountId() + " already exists!");
         }
 
-        accountsRepo.save(accountDet);
+        AccountsEntity account = new AccountsEntity();
+        account.setAccountName(accountDet.getAccountName());
+        account.setAccountId(accountDet.getAccountId());
+        account.setArn(accountDet.getArn());
+
+        accountsRepo.save(account);
+
         return ResponseEntity.accepted().body("Account onboarding successful!");
     }
 }

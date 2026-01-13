@@ -20,6 +20,10 @@ configurations {
     }
 }
 
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-simple"
+}
+
 repositories {
     mavenCentral()
 }
@@ -31,11 +35,11 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:3.1.1'
     compileOnly 'org.projectlombok:lombok'
 
-    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
     implementation('com.snowflake:snowpark:1.16.0') {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
+    implementation 'org.springframework.boot:spring-boot-starter-validation:4.0.1'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

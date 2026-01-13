@@ -1,5 +1,6 @@
 package com.CloudKeeper.CloudBalanceBackend.utils;
 
+import com.CloudKeeper.CloudBalanceBackend.globalExceptions.JwtTokenExpired;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -52,6 +53,10 @@ public class JwtUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        return claimExtraction(token).getExpiration().before(new Date());
+        boolean expired = claimExtraction(token).getExpiration().before(new Date());
+        if (expired)
+            throw new JwtTokenExpired("Token expired! Re-Login!");
+
+        return false;
     }
 }
